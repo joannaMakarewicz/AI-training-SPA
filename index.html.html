@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twój Plan Sukcesu: FCE (B2 First)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Lora', serif;
+        }
+        
+        /* Required Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+
+        /* Custom Animations */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-btn.active {
+            border-bottom: 3px solid #0f766e; /* teal-700 */
+            color: #0f766e;
+            font-weight: 600;
+        }
+        
+        /* Hide scrollbar for clean horizontal scrolling in tabs on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <!-- Chosen Palette: Calm Harmony (Stone backgrounds, Teal accents for action/progress, Warm Orange/Amber for highlights) -->
+    <!-- Application Structure Plan: Zastosowano architekturę 'Dashboardu' (Panelu Sterowania) z nawigacją zakładkową. Taka struktura pozwala dorosłemu, zajętemu użytkownikowi na szybki dostęp do konkretnych sekcji (Przegląd, Gramatyka, Słownictwo, Harmonogram) bez konieczności przewijania długiego dokumentu tekstu. Każda sekcja jest zadaniowa i interaktywna (rozwijane listy, przełączniki), co ułatwia systematyzację wiedzy, zmniejsza przytłoczenie ilością materiału i pozwala na skupienie się na jednym aspekcie w danej sesji nauki. -->
+    <!-- Visualization & Content Choices: 
+         - Overview: Wykres kołowy (Chart.js, Canvas) pokazujący wagę części egzaminu. Cel: uświadomienie, gdzie zdobywa się najwięcej punktów (Use of English + Reading to aż 40%).
+         - Grammar/Vocab: Akordeony (HTML/JS). Cel: Organizacja dużej ilości technicznej wiedzy (konstrukcje B2) w "kąski" (bite-sized chunks). Zmniejsza to obciążenie poznawcze.
+         - Schedule: Układ siatki (Grid). Cel: Wizualizacja 4-miesięcznej osi czasu w sposób blokowy, ułatwiający planowanie miesięczne.
+         Brak SVG/Mermaid. Elementy interaktywne oparte o czysty JS i Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- Top Navigation / Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <span class="text-3xl mr-3 text-teal-700">&#127891;</span> <!-- Unicode Graduation Cap -->
+                    <div>
+                        <h1 class="text-2xl font-bold text-stone-800">Certyfikat FCE (B2 First)</h1>
+                        <p class="text-sm text-stone-500">Twój 4-miesięczny plan strategiczny</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <nav class="flex space-x-1 sm:space-x-6 overflow-x-auto no-scrollbar w-full md:w-auto pb-2 md:pb-0">
+                    <button onclick="switchTab('dashboard')" class="tab-btn active px-3 py-2 text-sm md:text-base text-stone-600 hover:text-teal-700 transition-colors whitespace-nowrap" id="btn-dashboard">Wprowadzenie</button>
+                    <button onclick="switchTab('grammar')" class="tab-btn px-3 py-2 text-sm md:text-base text-stone-600 hover:text-teal-700 transition-colors whitespace-nowrap" id="btn-grammar">Gramatyka</button>
+                    <button onclick="switchTab('vocab')" class="tab-btn px-3 py-2 text-sm md:text-base text-stone-600 hover:text-teal-700 transition-colors whitespace-nowrap" id="btn-vocab">Słownictwo & Styl</button>
+                    <button onclick="switchTab('schedule')" class="tab-btn px-3 py-2 text-sm md:text-base text-stone-600 hover:text-teal-700 transition-colors whitespace-nowrap" id="btn-schedule">Harmonogram 4M</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= SECTION 1: DASHBOARD ================= -->
+        <section id="tab-dashboard" class="fade-in block">
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 mb-8 border-t-4 border-teal-600">
+                <h2 class="text-3xl font-bold mb-4 text-stone-800">Witaj na drodze do FCE!</h2>
+                <p class="text-lg text-stone-600 leading-relaxed mb-6">
+                    Ta aplikacja to Twój interaktywny drogowskaz na najbliższe 4 miesiące. Będąc na solidnym poziomie B1/B2 i mając za sobą lata regularnego kontaktu z językiem, Twoim głównym zadaniem nie jest teraz nauka "od zera", ale <strong>uporządkowanie wiedzy, załatanie luk i opanowanie technik egzaminacyjnych</strong>. Jako dorosła osoba ucząca się, Twoją przewagą jest logika i dyscyplina. Skup się na regularności (np. 30 minut dziennie), a nie maratonach nauki.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-8 pt-8 border-t border-stone-200">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="text-2xl mr-2 text-amber-500">&#128202;</span> Struktura Egzaminu
+                        </h3>
+                        <p class="text-stone-600 mb-4">
+                            Zrozumienie, za co Cambridge przyznaje punkty, to połowa sukcesu. Egzamin składa się z 4 głównych części. Największą wagę ma połączona sekcja Reading & Use of English. Kliknij na elementy wykresu, aby zobaczyć szczegóły.
+                        </p>
+                        <ul class="space-y-3 text-stone-700">
+                            <li class="flex items-start"><span class="text-teal-600 mr-2 font-bold">&#10003;</span> <strong>Reading & Use of English (1h 15m):</strong> Sprawdza gramatykę, słownictwo i czytanie ze zrozumieniem.</li>
+                            <li class="flex items-start"><span class="text-teal-600 mr-2 font-bold">&#10003;</span> <strong>Writing (1h 20m):</strong> Esej (obowiązkowy) + 1 tekst do wyboru (artykuł, e-mail, recenzja, raport).</li>
+                            <li class="flex items-start"><span class="text-teal-600 mr-2 font-bold">&#10003;</span> <strong>Listening (ok. 40m):</strong> 4 różne zadania sprawdzające rozumienie ze słuchu.</li>
+                            <li class="flex items-start"><span class="text-teal-600 mr-2 font-bold">&#10003;</span> <strong>Speaking (14m):</strong> Rozmowa z egzaminatorem i drugim kandydatem (4 części).</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-stone-50 p-4 rounded-lg">
+                        <div class="chart-container">
+                            <canvas id="examWeightChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-stone-500 mt-4 italic">Procentowy udział poszczególnych części w ocenie końcowej.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: GRAMMAR ================= -->
+        <section id="tab-grammar" class="fade-in hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-3 text-stone-800">Żelazna Gramatyka (Use of English)</h2>
+                <p class="text-lg text-stone-600">
+                    W tej sekcji zebrano absolutne "must-have" gramatyczne na poziomie B2. Te konstrukcje gwarantują punkty w kluczowych zadaniach (zwłaszcza <i>Key Word Transformation</i>). Kliknij w dany temat, aby rozwinąć wyjaśnienie i przykłady.
+                </p>
+            </div>
+
+            <div class="space-y-4" id="grammar-accordion">
+                <!-- Items injected by JS -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: VOCABULARY & STYLE ================= -->
+        <section id="tab-vocab" class="fade-in hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-3 text-stone-800">Słownictwo, Styl i Pisanie</h2>
+                <p class="text-lg text-stone-600">
+                    Sama poprawność to nie wszystko. Na poziomie B2 ocenia się bogactwo języka (zakres słownictwa) oraz to, czy potrafisz dostosować styl (formalny/nieformalny) do zadania. Przełączaj między poniższymi kategoriami.
+                </p>
+            </div>
+
+            <!-- Sub-tabs -->
+            <div class="flex border-b border-stone-200 mb-6 overflow-x-auto no-scrollbar">
+                <button onclick="showVocab('collocations')" id="v-btn-collocations" class="v-tab-btn active px-4 py-2 font-semibold text-teal-700 border-b-2 border-teal-700 whitespace-nowrap">Kolokacje & Phrasale</button>
+                <button onclick="showVocab('linking')" id="v-btn-linking" class="v-tab-btn px-4 py-2 font-semibold text-stone-500 hover:text-teal-600 whitespace-nowrap">Słowa Łączące (Linking Words)</button>
+                <button onclick="showVocab('writing')" id="v-btn-writing" class="v-tab-btn px-4 py-2 font-semibold text-stone-500 hover:text-teal-600 whitespace-nowrap">Formaty Pisemne (Writing)</button>
+            </div>
+
+            <!-- Vocab Content Areas -->
+            <div class="bg-white rounded-lg shadow p-6 min-h-[400px]">
+                
+                <!-- Collocations Content -->
+                <div id="v-content-collocations" class="v-content block">
+                    <h3 class="text-2xl font-bold mb-4 text-stone-800"><span class="text-amber-500 mr-2">&#128269;</span> Związki Wyrazowe</h3>
+                    <p class="mb-6 text-stone-600">Zamiast uczyć się pojedynczych słówek, ucz się ich w naturalnych związkach. To klucz do zadań <i>Multiple-Choice Cloze</i>.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-stone-50 p-5 rounded border border-stone-200">
+                            <h4 class="font-bold text-lg mb-3 text-teal-800">Czasowniki frazowe (Phrasal Verbs)</h4>
+                            <p class="text-sm mb-3">Zwróć szczególną uwagę na te z czasownikami: <i>get, make, do, take, put, bring, come</i>.</p>
+                            <ul class="list-disc pl-5 space-y-2 text-stone-700 text-sm">
+                                <li><b>Put off</b> (przełożyć) - <i>The meeting was put off until tomorrow.</i></li>
+                                <li><b>Bring up</b> (wychować / poruszyć temat) - <i>She was brought up in London.</i></li>
+                                <li><b>Look forward to (+ ING)</b> (nie móc się doczekać) - <i>I look forward to hearing from you.</i></li>
+                                <li><b>Turn down</b> (odrzucić ofertę/zciszyć) - <i>They turned down my application.</i></li>
+                                <li><b>Come up with</b> (wpaść na pomysł) - <i>He came up with a brilliant idea.</i></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 p-5 rounded border border-stone-200">
+                            <h4 class="font-bold text-lg mb-3 text-teal-800">Zależności z przyimkami</h4>
+                            <p class="text-sm mb-3">Słowa, które zawsze łączą się z konkretnym przyimkiem.</p>
+                            <ul class="list-disc pl-5 space-y-2 text-stone-700 text-sm">
+                                <li>Be <b>capable of</b> doing sth</li>
+                                <li>Be <b>responsible for</b> sth</li>
+                                <li><b>Succeed in</b> doing sth</li>
+                                <li><b>Apologise for</b> doing sth</li>
+                                <li><b>Prevent</b> sb <b>from</b> doing sth</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linking Words Content -->
+                <div id="v-content-linking" class="v-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-stone-800"><span class="text-amber-500 mr-2">&#128279;</span> Spójność i Logika tekstu</h3>
+                    <p class="mb-6 text-stone-600">Używanie zaawansowanych słów łączących podnosi ocenę za "Organization" w części Writing.</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-stone-100 text-stone-700">
+                                    <th class="p-3 border-b-2 border-stone-300">Cel/Funkcja</th>
+                                    <th class="p-3 border-b-2 border-stone-300">Zamiast prostego...</th>
+                                    <th class="p-3 border-b-2 border-stone-300">Użyj (B2)...</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-3 font-semibold">Dodawanie informacji</td>
+                                    <td class="p-3">And, also</td>
+                                    <td class="p-3 font-mono text-teal-700">Furthermore, Moreover, In addition</td>
+                                </tr>
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-3 font-semibold">Kontrast / Sprzeczność</td>
+                                    <td class="p-3">But</td>
+                                    <td class="p-3 font-mono text-teal-700">However, Nevertheless, Whereas</td>
+                                </tr>
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-3 font-semibold">Mimo że / Pomimo</td>
+                                    <td class="p-3">Even though</td>
+                                    <td class="p-3 font-mono text-teal-700">Despite (+ Noun/ING), In spite of...</td>
+                                </tr>
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-3 font-semibold">Skutek / Rezultat</td>
+                                    <td class="p-3">So</td>
+                                    <td class="p-3 font-mono text-teal-700">Therefore, As a result, Consequently</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Writing Formats Content -->
+                <div id="v-content-writing" class="v-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-stone-800"><span class="text-amber-500 mr-2">&#9997;</span> Formaty Pisemne</h3>
+                    <p class="mb-6 text-stone-600">Styl musi odpowiadać zadaniu. Esej jest zawsze w pełni formalny. Inne teksty zależą od polecenia.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="border border-stone-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-lg text-teal-800 mb-2">Esej (Obowiązkowy)</h4>
+                            <p class="text-sm text-stone-600 mb-3">Styl: Bardzo formalny. Obiektywny.</p>
+                            <ul class="text-sm space-y-1 text-stone-700 list-disc pl-4">
+                                <li>Brak skrótów (I'm -> I am)</li>
+                                <li>Strona bierna (It is believed...)</li>
+                                <li>Wyraźne akapity argumentacyjne</li>
+                            </ul>
+                        </div>
+                        <div class="border border-stone-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-lg text-teal-800 mb-2">Artykuł (Article)</h4>
+                            <p class="text-sm text-stone-600 mb-3">Styl: Półformalny. Angażujący.</p>
+                            <ul class="text-sm space-y-1 text-stone-700 list-disc pl-4">
+                                <li>Chwytliwy tytuł</li>
+                                <li>Pytania retoryczne (Have you ever...?)</li>
+                                <li>Bezpośrednie zwroty do czytelnika</li>
+                            </ul>
+                        </div>
+                        <div class="border border-stone-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-lg text-teal-800 mb-2">Recenzja (Review)</h4>
+                            <p class="text-sm text-stone-600 mb-3">Styl: Zależny od czasopisma, zwykle półformalny.</p>
+                            <ul class="text-sm space-y-1 text-stone-700 list-disc pl-4">
+                                <li>Bogate przymiotniki (breathtaking, gripping)</li>
+                                <li>Jasna rekomendacja na końcu</li>
+                            </ul>
+                        </div>
+                        <div class="border border-stone-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-lg text-teal-800 mb-2">List / E-mail</h4>
+                            <p class="text-sm text-stone-600 mb-3">Styl: Formalny LUB Nieformalny (czytaj uważnie!).</p>
+                            <ul class="text-sm space-y-1 text-stone-700 list-disc pl-4">
+                                <li>Formalny: Dear Sir/Madam -> Yours faithfully</li>
+                                <li>Nieformalny: Hi John -> Best wishes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: SCHEDULE ================= -->
+        <section id="tab-schedule" class="fade-in hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-3 text-stone-800">Twój 4-Miesięczny Harmonogram</h2>
+                <p class="text-lg text-stone-600">
+                    Plan zakłada naukę przez około <strong>4-5 godzin w tygodniu</strong> (np. 4 dni x 45 minut + 1 dzień x 1.5h z Writingiem/Testem). Jako pracująca dorosła osoba, jeśli opuścisz dzień - nie przejmuj się. Ważna jest konsekwencja długoterminowa.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Month 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden relative">
+                    <div class="bg-teal-700 text-white text-center py-3 font-bold text-lg">Miesiąc 1</div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-stone-800 mb-2 border-b pb-2">Fundamenty & Luki</h4>
+                        <ul class="space-y-3 text-sm text-stone-600 mt-4">
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Gramatyka:</strong> Powtórka wszystkich czasów, Conditionals (0-3), podstawy strony biernej.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Słownictwo:</strong> Słowotwórstwo (Word Formation - przedrostki i przyrostki). Robienie tabel.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Reading:</strong> Rozwiąż 2-3 pełne arkusze Reading (bez presji czasu). Szukaj synonimów.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Nawyk:</strong> Słuchanie podcastów po angielsku w drodze do pracy (np. <i>6 Minute English</i>).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Month 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden relative">
+                    <div class="bg-teal-600 text-white text-center py-3 font-bold text-lg">Miesiąc 2</div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-stone-800 mb-2 border-b pb-2">Rozbudowa & Writing</h4>
+                        <ul class="space-y-3 text-sm text-stone-600 mt-4">
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Gramatyka:</strong> Mowa zależna (Reported Speech), czasowniki modalne w przeszłości (must have done), Gerund/Infinitive.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Writing:</strong> Nauka struktury eseju. Napisz 2 eseje. Przeanalizuj format listu formalnego i nieformalnego.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Use of English:</strong> Ćwiczenie zadań typu "Key Word Transformation". Tutaj wykorzystujesz gramatykę w praktyce.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Month 3 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden relative">
+                    <div class="bg-teal-500 text-white text-center py-3 font-bold text-lg">Miesiąc 3</div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-stone-800 mb-2 border-b pb-2">Techniki & Mówienie</h4>
+                        <ul class="space-y-3 text-sm text-stone-600 mt-4">
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Gramatyka:</strong> Konstrukcje zaawansowane: Wish / If only, Inwersja.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Speaking:</strong> Znajdź partnera (lub lektora iTalki) do przećwiczenia 4 części Speakingu. Wyucz się zwrotów reagowania (I couldn't agree more, On the other hand...).</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Listening:</strong> Robienie testów ze stoperem. Czytanie pytań zanim usłyszysz nagranie.</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2">&#10148;</span> <strong>Writing:</strong> Artykuł i Recenzja.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Month 4 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden relative">
+                    <div class="bg-amber-600 text-white text-center py-3 font-bold text-lg">Miesiąc 4</div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-stone-800 mb-2 border-b pb-2">Symulacje & Szlif</h4>
+                        <ul class="space-y-3 text-sm text-stone-600 mt-4">
+                            <li class="flex items-start"><span class="text-teal-700 font-bold mr-2">&#10003;</span> <strong>Mock Exams:</strong> Minimum 3 pełne testy próbne (Past Papers) w warunkach egzaminacyjnych (ze stoperem, bez przerw!).</li>
+                            <li class="flex items-start"><span class="text-teal-700 font-bold mr-2">&#10003;</span> <strong>Analiza błędów:</strong> Spędzaj tyle samo czasu na analizowaniu tego co zrobiłaś źle, co na rozwiązywaniu testu. Dlaczego ta odpowiedź jest zła?</li>
+                            <li class="flex items-start"><span class="text-teal-700 font-bold mr-2">&#10003;</span> <strong>Powtórki:</strong> Tylko Twoje notatki z trudnymi kolokacjami i słówkami łączącymi.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-800 text-stone-400 py-6 mt-12 text-center text-sm">
+        <p>Aplikacja wygenerowana na potrzeby zaplanowania nauki do FCE. Pamiętaj: systematyczność pokonuje talent!</p>
+    </footer>
+
+    <!-- Interactive Logic -->
+    <script>
+        // Data for Grammar Accordion
+        const grammarTopics = [
+            {
+                title: "Czasy Złożone (Perfect & Continuous)",
+                desc: "Zrozumienie różnicy pomiędzy Present Perfect (skutek w teraźniejszości) a Past Simple (zakończony czas) to podstawa. Dodatkowo Present Perfect Continuous (nacisk na trwanie czynności).",
+                example: "I <b>have been painting</b> the room (jestem zmęczona, widać farbę) vs I <b>have painted</b> the room (pokój jest gotowy).",
+                tip: "Na B2 często pojawia się Past Perfect, aby opisać co wydarzyło się zanim wydarzyło się coś innego w przeszłości."
+            },
+            {
+                title: "Tryby Warunkowe (Conditionals) i 'Mixed'",
+                desc: "Musisz biegle operować trybem 1, 2 i 3. Na B2 kluczowe jest też zrozumienie 'Mixed Conditionals' (Mieszanych), zwłaszcza gdy przeszłość ma skutek w teraźniejszości.",
+                example: "<b>3rd:</b> If I had studied harder, I would have passed. <br><b>Mixed:</b> If I had taken the map (wczoraj), we wouldn't be lost now (dzisiaj).",
+                tip: "Ucz się alternatyw dla 'if': <i>unless (if not), provided that, as long as</i>."
+            },
+            {
+                title: "Strona Bierna (Passive Voice) & Causative",
+                desc: "Używana masowo w Writing (formalnym) i Use of English. Należy znać strukturę 'have/get something done' (zlecić coś komuś).",
+                example: "<b>Standard:</b> The book was written in 1999. <br><b>Causative:</b> I <b>had my car repaired</b> yesterday (nie naprawiłem sam, mechanik to zrobił).",
+                tip: "Konstrukcje bezosobowe: 'It is said that he is...' lub 'He is said to be...'."
+            },
+            {
+                title: "Mowa Zależna (Reported Speech) & Reporting Verbs",
+                desc: "Poza zwykłym cofaniem czasów (Present -> Past), B2 wymaga znajomości czasowników relacjonujących (Reporting Verbs) i ich konstrukcji (np. kto co komu + ing/to do).",
+                example: "He <b>denied stealing</b> the money. <br>She <b>suggested going</b> to the cinema. <br>He <b>reminded me to call</b> my mom.",
+                tip: "Czasowniki do opanowania: <i>admit, deny, suggest, insist, accuse sb of, blame sb for, refuse, offer</i>."
+            },
+            {
+                title: "Czasowniki Modalne w Przeszłości (Modals of Deduction)",
+                desc: "Spekulowanie na temat przeszłości. Używamy struktury: Modalny + have + III forma (Past Participle).",
+                example: "He <b>must have forgotten</b> (Na pewno zapomniał). <br>She <b>can't have stolen</b> it (To niemożliwe, że ona to ukradła). <br>You <b>shouldn't have said</b> that (Nie powinieneś był tego mówić - wyrzut).",
+                tip: "To absolutny klasyk w zadaniu 4 (Key Word Transformation)."
+            },
+            {
+                title: "Wishes & Regrets (I wish / If only)",
+                desc: "Wyrażanie żalu o teraźniejszości lub przeszłości, a także irytacji na zachowanie innych.",
+                example: "<b>Teraźniejszość:</b> I wish I <b>had</b> more time (Past Simple). <br><b>Przeszłość:</b> If only I <b>hadn't bought</b> those shoes (Past Perfect). <br><b>Irytacja:</b> I wish he <b>would stop</b> smoking (Would + bezokolicznik).",
+                tip: ""
+            }
+        ];
+
+        // 1. Initialize Tabs
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('main > section').forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('block');
+            });
+            // Show targeted section
+            const target = document.getElementById('tab-' + tabId);
+            target.classList.remove('hidden');
+            target.classList.add('block');
+
+            // Update Nav buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        // 2. Initialize Vocab Sub-Tabs
+        function showVocab(vocabId) {
+            document.querySelectorAll('.v-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            const target = document.getElementById('v-content-' + vocabId);
+            target.classList.remove('hidden');
+            target.classList.add('block');
+
+            document.querySelectorAll('.v-tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-teal-700', 'border-b-2', 'border-teal-700');
+                btn.classList.add('text-stone-500');
+            });
+            
+            const btnTarget = document.getElementById('v-btn-' + vocabId);
+            btnTarget.classList.add('active', 'text-teal-700', 'border-b-2', 'border-teal-700');
+            btnTarget.classList.remove('text-stone-500');
+        }
+
+        // 3. Render Grammar Accordion
+        function renderGrammar() {
+            const container = document.getElementById('grammar-accordion');
+            grammarTopics.forEach((topic, index) => {
+                const item = document.createElement('div');
+                item.className = "bg-white border border-stone-200 rounded-lg shadow-sm overflow-hidden";
+                item.innerHTML = `
+                    <button class="w-full text-left px-6 py-4 font-semibold text-lg text-stone-800 bg-stone-50 hover:bg-stone-100 focus:outline-none flex justify-between items-center transition-colors" onclick="toggleAccordion(${index})">
+                        <span><span class="text-teal-700 mr-2">&#9658;</span> ${topic.title}</span>
+                        <span id="icon-${index}" class="text-stone-400 font-bold transition-transform duration-300">+</span>
+                    </button>
+                    <div id="content-${index}" class="hidden px-6 py-4 border-t border-stone-200 bg-white">
+                        <p class="text-stone-700 mb-3">${topic.desc}</p>
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-3 mb-3">
+                            <p class="text-sm font-mono text-stone-800"><b>Przykłady:</b><br>${topic.example}</p>
+                        </div>
+                        ${topic.tip ? `<p class="text-sm text-teal-800 bg-teal-50 p-2 rounded"><b>💡 Egzaminacyjny Tip:</b> ${topic.tip}</p>` : ''}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleAccordion(index) {
+            const content = document.getElementById(`content-${index}`);
+            const icon = document.getElementById(`icon-${index}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.innerText = '-';
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                content.classList.add('hidden');
+                icon.innerText = '+';
+                icon.style.transform = "rotate(0deg)";
+            }
+        }
+
+        // 4. Initialize Chart.js
+        function initChart() {
+            const ctx = document.getElementById('examWeightChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Reading & Use of English', 'Writing', 'Listening', 'Speaking'],
+                    datasets: [{
+                        data: [40, 20, 20, 20],
+                        backgroundColor: [
+                            '#0f766e', // teal-700
+                            '#0d9488', // teal-600
+                            '#14b8a6', // teal-500
+                            '#d97706'  // amber-600
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Important for fitting container
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Nunito Sans', sans-serif", size: 13 },
+                                color: '#444'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ' + context.parsed + '% wagi oceny';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%' // Makes it a doughnut instead of pie
+                }
+            });
+        }
+
+        // On Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrammar();
+            initChart();
+        });
+
+    </script>
+</body>
+</html>
